@@ -22,7 +22,7 @@ if 'current_q' not in st.session_state:
 if 'scores' not in st.session_state:
     st.session_state.scores = {"الرياضيات": 0, "العلوم": 0, "الإنجليزي": 0, "الحاسب": 0}
 
-# الأسئلة
+# قاعدة الأسئلة
 questions = {
     "الرياضيات": [
         {"q": "5 + 7 = ?", "options": ["11", "12", "13"], "a": "12"},
@@ -54,18 +54,18 @@ questions = {
     ]
 }
 
-# --- البداية ---
+# --- شاشة البداية ---
 if st.session_state.stage == "welcome":
     st.title("⚔️ تحدي الأبطال: معركة المعرفة")
-    # صورة المحارب
-    st.image("https://cdn-icons-png.flaticon.com/512/3408/3408545.png", width=250)
+    # تم وضع رابط الصورة التي طلبتِها (المحارب بالسيفين)
+    st.image("https://r2.erweima.ai/i/6DAnC4M_S2m4_wS_Y1A5pA.png", width=350)
     st.write("### هل أنتِ مستعدة لبدء المعركة الكبرى؟")
     if st.button("🚀 انطلقي الآن!"):
         st.session_state.stage = "الرياضيات"
         st.rerun()
     st.markdown('<div class="footer-text">المطورة المبدعة: الجوري ✨</div>', unsafe_allow_html=True)
 
-# --- الأسئلة ---
+# --- منطق الأسئلة ---
 elif st.session_state.stage in questions:
     subject = st.session_state.stage
     q_idx = st.session_state.current_q
@@ -100,14 +100,13 @@ elif st.session_state.stage == "final":
         st.progress(score * 20)
     
     st.write("---")
-    # تحليل الضعف والروابط
-    st.error(f"⚠️ **تحتاجين تطوير في {weakest[0]}**")
-    st.write(f"لتحسين مستواكِ في {weakest[0]}، اضغطي هنا: [منصة عين التعليمية](https://ien.edu.sa)")
+    # روابط تحسين الضعف
+    st.error(f"⚠️ تحليل LAI: تحتاجين تطوير في مادة **{weakest[0]}**")
+    st.write(f"لتحسين مستواكِ، راجعي هنا: [منصة عين التعليمية](https://ien.edu.sa)")
     
     # تحليل القوة
-    st.success(f"🌟 **أنتِ أسطورية في {strongest[0]}!**")
-    st.write("استمري في تطوير نفسكِ ومساعدة زميلاتك.")
-
+    st.success(f"🌟 تحليل LAI: أنتِ أسطورية في مادة **{strongest[0]}**!")
+    
     if st.button("🔄 العودة للبداية"):
         st.session_state.stage = "welcome"
         st.session_state.current_q = 0
