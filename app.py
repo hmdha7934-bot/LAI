@@ -3,7 +3,7 @@ import streamlit as st
 # إعدادات الصفحة
 st.set_page_config(page_title="LAI Battle Game", page_icon="⚔️", layout="centered")
 
-# مظهر الأزرار والتنسيق
+# تنسيق الألوان والأزرار
 st.markdown("""
     <style>
     .stButton > button { width: 100%; border-radius: 20px; height: 3.5em; background-color: #E74C3C; color: white; font-weight: bold; font-size: 18px; border: none; }
@@ -22,7 +22,7 @@ if 'current_q' not in st.session_state:
 if 'scores' not in st.session_state:
     st.session_state.scores = {"الرياضيات": 0, "العلوم": 0, "الإنجليزي": 0, "الحاسب": 0}
 
-# قاعدة بيانات الأسئلة
+# الأسئلة
 questions = {
     "الرياضيات": [
         {"q": "5 + 7 = ?", "options": ["11", "12", "13"], "a": "12"},
@@ -39,46 +39,43 @@ questions = {
         {"q": "حالة الماء عندما يتجمد؟", "options": ["سائلة", "غازية", "صلبة"], "a": "صلبة"}
     ],
     "الإنجليزي": [
-        {"q": "Choose the color of the Sky:", "options": ["Red", "Blue", "Green"], "a": "Blue"},
+        {"q": "Color of the Sky:", "options": ["Red", "Blue", "Green"], "a": "Blue"},
         {"q": "Opposite of 'Big':", "options": ["Small", "Long", "Fast"], "a": "Small"},
         {"q": "He ____ a student.", "options": ["am", "is", "are"], "a": "is"},
-        {"q": "The plural of 'Cat':", "options": ["Cats", "Cates", "Catis"], "a": "Cats"},
+        {"q": "Plural of 'Cat':", "options": ["Cats", "Cates", "Catis"], "a": "Cats"},
         {"q": "Day after Monday:", "options": ["Sunday", "Tuesday", "Friday"], "a": "Tuesday"}
     ],
     "الحاسب": [
         {"q": "وحدة قياس سعة التخزين؟", "options": ["بايت", "متر", "جرام"], "a": "بايت"},
-        {"q": "تعتبر الفأرة من وحدات؟", "options": ["الإخراج", "الإدخال", "المعالجة"], "a": "الإدخال"},
+        {"q": "الفأرة تعتبر وحدة؟", "options": ["إخراج", "إدخال", "معالجة"], "a": "إدخال"},
         {"q": "اختصار زر النسخ؟", "options": ["Ctrl+V", "Ctrl+C", "Ctrl+X"], "a": "Ctrl+C"},
-        {"q": "يستخدم برنامج Word لـ؟", "options": ["الرسم", "كتابة النصوص", "الحسابات"], "a": "كتابة النصوص"},
-        {"q": "شبكة تربط العالم ببعضه؟", "options": ["الإنترنت", "الإنترانت", "المودم"], "a": "الإنترنت"}
+        {"q": "يستخدم Word لـ؟", "options": ["الرسم", "كتابة النصوص", "الحسابات"], "a": "كتابة النصوص"},
+        {"q": "شبكة تربط العالم؟", "options": ["الإنترنت", "الإنترانت", "المودم"], "a": "الإنترنت"}
     ]
 }
 
-# --- شاشة البداية ---
+# --- البداية ---
 if st.session_state.stage == "welcome":
     st.title("⚔️ تحدي الأبطال: معركة المعرفة")
-    st.image("https://cdn-icons-png.flaticon.com/512/3408/3408545.png", width=300) 
+    # صورة المحارب
+    st.image("https://cdn-icons-png.flaticon.com/512/3408/3408545.png", width=250)
     st.write("### هل أنتِ مستعدة لبدء المعركة الكبرى؟")
-    st.info("لديكِ 20 تحدياً في 4 مواد.. أثبتي قوتكِ!")
     if st.button("🚀 انطلقي الآن!"):
         st.session_state.stage = "الرياضيات"
         st.rerun()
-    st.markdown('<div class="footer-text">تم تطوير البرنامج بواسطة المبرمجة المبدعة: الجوري ✨</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer-text">المطورة المبدعة: الجوري ✨</div>', unsafe_allow_html=True)
 
-# --- منطق الأسئلة ---
+# --- الأسئلة ---
 elif st.session_state.stage in questions:
     subject = st.session_state.stage
     q_idx = st.session_state.current_q
     st.header(f"🛡️ معركة {subject}")
-    st.write(f"**التحدي {q_idx + 1} من 5**")
     q_data = questions[subject][q_idx]
     user_choice = st.radio(q_data["q"], q_data["options"], key=f"{subject}_{q_idx}")
     if st.button("تأكيد الهجمة ⚔️"):
         if user_choice == q_data["a"]:
             st.session_state.scores[subject] += 1
             st.toast("إصابة مباشرة! ✅")
-        else:
-            st.toast("تصدى الوحش لهجمتك! ❌")
         if q_idx < 4:
             st.session_state.current_q += 1
         else:
@@ -88,21 +85,30 @@ elif st.session_state.stage in questions:
             st.session_state.stage = subs[idx+1] if idx < 3 else "final"
         st.rerun()
 
-# --- التحليل النهائي ---
+# --- التحليل النهائي وروابط التحسين ---
 elif st.session_state.stage == "final":
     st.title("🏆 وسام النصر وتحليل LAI")
     st.balloons()
+    
+    # تحديد أقوى وأضعف مادة
     sorted_scores = sorted(st.session_state.scores.items(), key=lambda x: x[1])
     weakest = sorted_scores[0]
     strongest = sorted_scores[-1]
+
     for sub, score in st.session_state.scores.items():
         st.write(f"**{sub}:** {score}/5")
         st.progress(score * 20)
+    
     st.write("---")
-    st.error(f"⚠️ **تحليل LAI (تحتاجين تطوير):** مهاراتك في **{weakest[0]}** تحتاج لتدريب.")
-    st.success(f"🌟 **تحليل LAI (نقطة قوة):** أنتِ أسطورية في **{strongest[0]}**!")
-    st.markdown(f"### صنع بكل فخر بواسطة: الجوري 🎖️")
-    if st.button("🔄 إعادة المعركة"):
+    # تحليل الضعف والروابط
+    st.error(f"⚠️ **تحتاجين تطوير في {weakest[0]}**")
+    st.write(f"لتحسين مستواكِ في {weakest[0]}، اضغطي هنا: [منصة عين التعليمية](https://ien.edu.sa)")
+    
+    # تحليل القوة
+    st.success(f"🌟 **أنتِ أسطورية في {strongest[0]}!**")
+    st.write("استمري في تطوير نفسكِ ومساعدة زميلاتك.")
+
+    if st.button("🔄 العودة للبداية"):
         st.session_state.stage = "welcome"
         st.session_state.current_q = 0
         st.session_state.scores = {k: 0 for k in st.session_state.scores}
