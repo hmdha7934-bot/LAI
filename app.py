@@ -9,6 +9,8 @@ st.markdown("""
     .stButton > button { width: 100%; border-radius: 20px; height: 3.5em; background-color: #E74C3C; color: white; font-weight: bold; font-size: 18px; border: none; }
     .stButton > button:hover { background-color: #C0392B; border: 2px solid white; }
     .stRadio > label { font-size: 20px !important; font-weight: bold; color: #2C3E50; }
+    footer {visibility: hidden;}
+    .footer-text { position: fixed; bottom: 10px; width: 100%; text-align: center; color: #7f8c8d; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -20,7 +22,7 @@ if 'current_q' not in st.session_state:
 if 'scores' not in st.session_state:
     st.session_state.scores = {"الرياضيات": 0, "العلوم": 0, "الإنجليزي": 0, "الحاسب": 0}
 
-# قاعدة بيانات الأسئلة (5 لكل مادة)
+# قاعدة بيانات الأسئلة
 questions = {
     "الرياضيات": [
         {"q": "5 + 7 = ?", "options": ["11", "12", "13"], "a": "12"},
@@ -55,32 +57,28 @@ questions = {
 # --- شاشة البداية ---
 if st.session_state.stage == "welcome":
     st.title("⚔️ تحدي الأبطال: معركة المعرفة")
-    # تم تغيير الرابط لصورة بطل كرتوني قوية ومضمونة
     st.image("https://cdn-icons-png.flaticon.com/512/3408/3408545.png", width=300) 
     st.write("### هل أنتِ مستعدة لبدء المعركة الكبرى؟")
     st.info("لديكِ 20 تحدياً في 4 مواد.. أثبتي قوتكِ!")
     if st.button("🚀 انطلقي الآن!"):
         st.session_state.stage = "الرياضيات"
         st.rerun()
+    st.markdown('<div class="footer-text">تم تطوير البرنامج بواسطة المبرمجة المبدعة: الجوري ✨</div>', unsafe_allow_html=True)
 
 # --- منطق الأسئلة ---
 elif st.session_state.stage in questions:
     subject = st.session_state.stage
     q_idx = st.session_state.current_q
-    
     st.header(f"🛡️ معركة {subject}")
     st.write(f"**التحدي {q_idx + 1} من 5**")
-    
     q_data = questions[subject][q_idx]
     user_choice = st.radio(q_data["q"], q_data["options"], key=f"{subject}_{q_idx}")
-    
     if st.button("تأكيد الهجمة ⚔️"):
         if user_choice == q_data["a"]:
             st.session_state.scores[subject] += 1
             st.toast("إصابة مباشرة! ✅")
         else:
             st.toast("تصدى الوحش لهجمتك! ❌")
-            
         if q_idx < 4:
             st.session_state.current_q += 1
         else:
@@ -94,27 +92,17 @@ elif st.session_state.stage in questions:
 elif st.session_state.stage == "final":
     st.title("🏆 وسام النصر وتحليل LAI")
     st.balloons()
-    
-    # تحديد نقاط القوة والضعف
     sorted_scores = sorted(st.session_state.scores.items(), key=lambda x: x[1])
     weakest = sorted_scores[0]
     strongest = sorted_scores[-1]
-    
-    # عرض النتائج في بطاقات
     for sub, score in st.session_state.scores.items():
         st.write(f"**{sub}:** {score}/5")
         st.progress(score * 20)
-
     st.write("---")
-    # تحليل المادة الضعيفة
     st.error(f"⚠️ **تحليل LAI (تحتاجين تطوير):** مهاراتك في **{weakest[0]}** تحتاج لتدريب.")
-    st.write(f"**نصيحة:** لا تستسلمي! راجعي دروسك عبر هذا الرابط: [منصة عين التعليمية](https://ien.edu.sa)")
-    
-    # تحليل المادة القوية
     st.success(f"🌟 **تحليل LAI (نقطة قوة):** أنتِ أسطورية في **{strongest[0]}**!")
-    st.write(f"**كيف تطورين نفسك؟** حاولي حل ألغاز متقدمة في هذا المجال وشاركي معرفتك مع زميلاتك.")
-
-    if st.button("🔄 العودة لنقطة البداية"):
+    st.markdown(f"### صنع بكل فخر بواسطة: الجوري 🎖️")
+    if st.button("🔄 إعادة المعركة"):
         st.session_state.stage = "welcome"
         st.session_state.current_q = 0
         st.session_state.scores = {k: 0 for k in st.session_state.scores}
