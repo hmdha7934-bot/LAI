@@ -1,95 +1,115 @@
 import streamlit as st
 
 # إعدادات الصفحة
-st.set_page_config(page_title="LAI Learning Game", page_icon="🎮")
+st.set_page_config(page_title="LAI Battle Game", page_icon="⚔️", layout="centered")
 
-# تعريف "حالة اللعبة" للتنقل بين الصفحات
+# دالة لتنسيق الأزرار والمظهر
+st.markdown("""
+    <style>
+    .stButton>button { width: 100%; border-radius: 20px; height: 3em; background-color: #2E86C1; color: white; font-weight: bold; }
+    .main { background-color: #f0f2f6; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# إدارة حالة اللعبة
 if 'stage' not in st.session_state:
     st.session_state.stage = "welcome"
+if 'current_q' not in st.session_state:
+    st.session_state.current_q = 0
 if 'scores' not in st.session_state:
-    st.session_state.scores = {}
+    st.session_state.scores = {"الرياضيات": 0, "العلوم": 0, "الإنجليزي": 0, "الحاسب": 0}
 
-# --- دالة مساعدة لعرض النتائج ---
-def move_to(next_stage):
-    st.session_state.stage = next_stage
-    st.rerun()
+# قاعدة بيانات الأسئلة (5 لكل مادة)
+questions = {
+    "الرياضيات": [
+        {"q": "5 + 7 = ?", "options": ["11", "12", "13"], "a": "12"},
+        {"q": "ما هو ضعف العدد 8؟", "options": ["16", "14", "18"], "a": "16"},
+        {"q": "100 - 45 = ?", "options": ["65", "55", "45"], "a": "55"},
+        {"q": "3 × 9 = ?", "options": ["24", "27", "30"], "a": "27"},
+        {"q": "نصف العدد 50 هو؟", "options": ["20", "25", "30"], "a": "25"}
+    ],
+    "العلوم": [
+        {"q": "ما هو مركز المجموعة الشمسية؟", "options": ["الأرض", "الشمس", "القمر"], "a": "الشمس"},
+        {"q": "مادة توجد في جميع الكائنات الحية؟", "options": ["الماء", "الحديد", "الذهب"], "a": "الماء"},
+        {"q": "كم عدد كواكب المجموعة الشمسية؟", "options": ["7", "8", "9"], "a": "8"},
+        {"q": "العضو المسؤول عن التنفس؟", "options": ["القلب", "الرئتان", "المعدة"], "a": "الرئتان"},
+        {"q": "حالة الماء عندما يتجمد؟", "options": ["سائلة", "غازية", "صلبة"], "a": "صلبة"}
+    ],
+    "الإنجليزي": [
+        {"q": "Choose the color of the Sky:", ["Red", "Blue", "Green"], "a": "Blue"},
+        {"q": "Opposite of 'Big':", ["Small", "Long", "Fast"], "a": "Small"},
+        {"q": "He ____ a student.", ["am", "is", "are"], "a": "is"},
+        {"q": "The plural of 'Cat':", ["Cats", "Cates", "Catis"], "a": "Cats"},
+        {"q": "Day after Monday:", ["Sunday", "Tuesday", "Friday"], "a": "Tuesday"}
+    ],
+    "الحاسب": [
+        {"q": "وحدة قياس سعة التخزين؟", "options": ["بايت", "متر", "جرام"], "a": "بايت"},
+        {"q": "تعتبر الفأرة من وحدات؟", "options": ["الإخراج", "الإدخال", "المعالجة"], "a": "الإدخال"},
+        {"q": "اختصار زر النسخ؟", "options": ["Ctrl+V", "Ctrl+C", "Ctrl+X"], "a": "Ctrl+C"},
+        {"q": "يستخدم برنامج Word لـ؟", "options": ["الرسم", "كتابة النصوص", "الحسابات"], "a": "كتابة النصوص"},
+        {"q": "شبكة تربط العالم ببعضه؟", "options": ["الإنترنت", "الإنترانت", "المودم"], "a": "الإنترنت"}
+    ]
+}
 
-# --- 1. صفحة البداية ---
+# --- منطق اللعبة ---
+
 if st.session_state.stage == "welcome":
-    st.title("🤖 نظام LAI للتحليل الذكي")
-    st.image("https://img.freepik.com/free-vector/educational-video-game-concept_23-2148523390.jpg", width=400)
-    st.write("### هل أنتِ مستعدة لبدء رحلة التحدي؟")
-    st.info("سنجري اختباراً سريعاً في 5 مجالات لنكتشف مواهبكِ!")
-    if st.button("🚀 ابدأ اللعبة الآن"):
-        move_to("science")
+    st.title("⚔️ تحدي الأبطال: معركة المعرفة")
+    st.image("https://img.freepik.com/free-vector/hero-character-fighting-monsters_23-2148471415.jpg") # صورة بطل يحارب
+    st.write("### هل أنتِ مستعدة لمواجهة وحوش الجهل؟")
+    st.info("لديكِ 4 معارك (مواد)، كل معركة بها 5 تحديات!")
+    if st.button("🚀 ابدأ المعركة!"):
+        st.session_state.stage = "الرياضيات"
+        st.rerun()
 
-# --- 2. مادة العلوم ---
-elif st.session_state.stage == "science":
-    st.header("🔬 المرحلة 1: العلوم")
-    q1 = st.radio("ما هو الغاز الذي تتنفسه الكائنات الحية لتعيش؟", ["الأكسجين", "نيتروجين", "ثاني أكسيد الكربون"])
-    if st.button("تأكيد الإجابة والانتقال للرياضيات ➡️"):
-        st.session_state.scores['العلوم'] = 1 if q1 == "الأكسجين" else 0
-        move_to("math")
-
-# --- 3. مادة الرياضيات ---
-elif st.session_state.stage == "math":
-    st.header("🔢 المرحلة 2: الرياضيات")
-    q2 = st.number_input("إذا كان معك 5 تفاحات وأكلت 2، ثم اشتريت 4، كم أصبح معك؟", value=0)
-    if st.button("تأكيد الإجابة والانتقال للإسلامية ➡️"):
-        st.session_state.scores['الرياضيات'] = 1 if q2 == 7 else 0
-        move_to("islamic")
-
-# --- 4. مادة التربية الإسلامية ---
-elif st.session_state.stage == "islamic":
-    st.header("🕌 المرحلة 3: التربية الإسلامية")
-    q3 = st.radio("ما هو الركن الثاني من أركان الإسلام؟", ["الشهادتان", "الصلاة", "الحج"])
-    if st.button("تأكيد الإجابة والانتقال للإنجليزي ➡️"):
-        st.session_state.scores['الإسلامية'] = 1 if q3 == "الصلاة" else 0
-        move_to("english")
-
-# --- 5. مادة اللغة الإنجليزية ---
-elif st.session_state.stage == "english":
-    st.header("🔤 المرحلة 4: English")
-    q4 = st.selectbox("Choose the correct fruit name:", ["Apple 🍎", "Book 📖", "Car 🚗"])
-    if st.button("تأكيد الإجابة والانتقال للمهارات الرقمية ➡️"):
-        st.session_state.scores['اللغة الإنجليزية'] = 1 if q4 == "Apple 🍎" else 0
-        move_to("digital")
-
-# --- 6. المهارات الرقمية (الحاسب) ---
-elif st.session_state.stage == "digital":
-    st.header("💻 المرحلة 5: المهارات الرقمية")
-    q5 = st.radio("ما هو الجزء المسؤول عن 'عقل' الكمبيوتر؟", ["الشاشة", "المعالج (CPU)", "الفأرة"])
-    if st.button("🏁 إنهاء اللعبة ورؤية التحليل"):
-        st.session_state.scores['المهارات الرقمية'] = 1 if q5 == "المعالج (CPU)" else 0
-        move_to("final_report")
-
-# --- 7. التقرير النهائي والتحليل الشامل ---
-elif st.session_state.stage == "final_report":
-    st.title("📊 تقرير تحليل المستوى النهائي")
+elif st.session_state.stage in questions:
+    subject = st.session_state.stage
+    q_idx = st.session_state.current_q
     
-    total_score = sum(st.session_state.scores.values())
+    st.header(f"🛡️ معركة {subject}")
+    st.write(f"**التحدي رقم {q_idx + 1} من 5**")
+    
+    current_q_data = questions[subject][q_idx]
+    user_choice = st.radio(current_q_data["q"], current_q_data["options"], key=f"{subject}_{q_idx}")
+    
+    if st.button("تأكيد الهجمة ⚔️"):
+        if user_choice == current_q_data["a"]:
+            st.session_state.scores[subject] += 1
+            st.toast("إصابة مباشرة! ✅")
+        else:
+            st.toast("حاول مرة أخرى في التحدي القادم ❌")
+            
+        if q_idx < 4:
+            st.session_state.current_q += 1
+            st.rerun()
+        else:
+            # الانتقال للمادة التالية
+            subjects_list = list(questions.keys())
+            current_sub_idx = subjects_list.index(subject)
+            st.session_state.current_q = 0
+            if current_sub_idx < len(subjects_list) - 1:
+                st.session_state.stage = subjects_list[current_sub_idx + 1]
+            else:
+                st.session_state.stage = "final"
+            st.rerun()
+
+elif st.session_state.stage == "final":
+    st.title("🏆 انتهاء المعركة - تقرير النصر")
     st.balloons()
     
-    # عرض الدرجات في جدول أنيق
-    st.table([st.session_state.scores])
-    
-    # تحديد نقاط الضعف
-    weak_subjects = [sub for sub, score in st.session_state.scores.items() if score == 0]
-    
-    if not weak_subjects:
-        st.success("ما شاء الله! أنتِ مبدعة في كل المجالات. ننصحكِ بمشاريع ابتكارية متقدمة.")
-    else:
-        st.warning(f"تحليل LAI: أنتِ ممتازة، ولكن تحتاجين لتركيز أكثر في: {', '.join(weak_subjects)}")
+    for sub, score in st.session_state.scores.items():
+        st.write(f"**{sub}:** {score} من 5")
+        st.progress(score * 20) # شريط طاقة للمادة
         
-        st.write("### 📚 مصادر مقترحة لكِ:")
-        for sub in weak_subjects:
-            if sub == "العلوم":
-                st.write("- [قناة عين للعلوم](https://www.youtube.com/user/ienchannel)")
-            elif sub == "الرياضيات":
-                st.write("- [تدريبات جدول الضرب](https://www.math-drills.com)")
-            # يمكن إضافة روابط لكل مادة هنا
+    weak_sub = min(st.session_state.scores, key=st.session_state.scores.get)
+    if st.session_state.scores[weak_sub] < 3:
+        st.warning(f"💡 المحارب يحتاج لتدريب إضافي في: {weak_sub}")
+        st.write(f"إليكِ رابط لتقوية سلاحك في {weak_sub}: [اضغطي هنا](https://ien.edu.sa)")
+    else:
+        st.success("أنتِ محاربة أسطورية! مستواكِ مذهل في كل شيء.")
 
-    if st.button("🔄 إعادة المحاولة"):
+    if st.button("🔄 إعادة التحدي"):
         st.session_state.stage = "welcome"
-        st.session_state.scores = {}
+        st.session_state.current_q = 0
+        st.session_state.scores = {k: 0 for k in st.session_state.scores}
         st.rerun()
