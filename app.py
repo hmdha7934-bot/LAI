@@ -2,50 +2,17 @@ import streamlit as st
 import time
 
 # إعدادات الصفحة
-st.set_page_config(page_title="منصة LAI التعليمية", page_icon="🎓", layout="centered")
+st.set_page_config(page_title="منصة LAI التعليمية", page_icon="💡", layout="centered")
 
-# تنسيق CSS لدعم اللغة العربية والجمالية
+# تنسيق CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-    
-    html, body, [class*="st-"] {
-        direction: rtl;
-        text-align: right;
-        font-family: 'Cairo', sans-serif;
-    }
+    html, body, [class*="st-"] { direction: rtl; text-align: right; font-family: 'Cairo', sans-serif; }
     .stApp { background-color: #ffffff; }
-    
-    .welcome-box {
-        text-align: center;
-        padding: 40px;
-        border-radius: 25px;
-        background: linear-gradient(135deg, #e0f2f1 0%, #ffffff 100%);
-        border: 2px solid #10a37f;
-    }
-    
-    .stButton > button {
-        background: #10a37f;
-        color: white;
-        border-radius: 12px;
-        font-weight: bold;
-    }
-    
-    .report-card {
-        background: #f8f9fa;
-        border-right: 8px solid #10a37f;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
-    
-    .advice-box {
-        background: #fff8e1;
-        border: 1px dashed #ffb300;
-        padding: 15px;
-        border-radius: 10px;
-        margin-top: 10px;
-    }
+    .welcome-box { text-align: center; padding: 40px; border-radius: 25px; background: #f0fdf4; border: 2px solid #10a37f; }
+    .stButton > button { background: #10a37f; color: white; border-radius: 12px; font-weight: bold; width: 100%; }
+    .innovation-box { background: #fff4e5; border: 2px solid #ff9800; padding: 20px; border-radius: 15px; margin-top: 20px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -56,68 +23,75 @@ if 'scores' not in st.session_state: st.session_state.scores = {"لغتي": 0, "
 # --- 1. الصفحة الترحيبية ---
 if st.session_state.page == "welcome":
     st.markdown("<div class='welcome-box'>", unsafe_allow_html=True)
-    # صورة جديدة ومناسبة
-    st.image("https://img.freepik.com/free-vector/hand-drawn-back-school-background_23-2149033374.jpg", width=350)
-    st.markdown("<h1 style='color: #10a37f;'>مرحباً بكِ في منصة LAI</h1>", unsafe_allow_html=True)
-    st.markdown("<h4>المستقبل يبدأ من هنا.. حللي مهاراتك مع ذكاء جوري الاصطناعي</h4>", unsafe_allow_html=True)
-    if st.button("تفعيل LAI وابدأي الاختبار 🚀"):
+    st.image("https://img.freepik.com/free-vector/creative-idea-concept-with-lightbulb_23-2148154943.jpg", width=300)
+    st.markdown("<h1 style='color: #10a37f;'>ابدأ رحلتك مع LAI</h1>", unsafe_allow_html=True)
+    st.markdown("<h4>منصتكِ الذكية للتعلم والابتكار برؤية المبرمجة جوري</h4>", unsafe_allow_html=True)
+    if st.button("انطلق الآن 🚀"):
         st.session_state.page = "quiz_لغتي"
         st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --- 2. بنك الأسئلة والروابط ---
+# --- 2. الأسئلة التعليمية (مختصرة للبرمجة) ---
 questions = {
-    "لغتي": [("علامة الرفع الأصلية؟", ["الضمة", "الفتحة"]), ("نوع 'يقرأ'؟", ["فعل", "اسم"]), ("جمع 'كتاب'؟", ["كتب", "كتابون"]), ("ضد 'الصدق'؟", ["الكذب", "الأمانة"]), ("الفاعل يكون دائماً؟", ["مرفوعاً", "منصوباً"])],
-    "رياضيات": [("12×12؟", ["144", "124"]), ("زوايا المثلث؟", ["180", "360"]), ("نصف الـ 50؟", ["25", "20"]), ("5+5×2؟", ["15", "20"]), ("العدد الزوجي هو؟", ["2", "3"])],
-    "حاسب": [("وحدة الإدخال؟", ["الفأرة", "الشاشة"]), ("اختصار الذكاء الاصطناعي؟", ["AI", "VR"]), ("عقل الحاسب؟", ["المعالج", "الرام"]), ("لغة برمجة؟", ["Python", "Word"]), ("شبكة عالمية؟", ["الإنترنت", "المحلية"])],
-    "انقلش": [("I ___ happy", ["am", "is"]), ("Past of 'Eat'?", ["Ate", "Eaten"]), ("Color of grass?", ["Green", "Red"]), ("Plural of 'Boy'?", ["Boys", "Boies"]), ("Opposite of 'Hot'?", ["Cold", "Warm"])],
-    "علوم": [("كوكب المريخ لونه؟", ["أحمر", "أزرق"]), ("غاز التنفس؟", ["أكسجين", "نيتروجين"]), ("أقرب كوكب؟", ["عطارد", "الأرض"]), ("حالة الثلج؟", ["صلبة", "سائلة"]), ("مصدر الضوء؟", ["الشمس", "القمر"])]
+    "لغتي": [("مبتدأ الجملة؟", ["اسم", "فعل"]), ("جمع طالب؟", ["طلاب", "طالبات"])],
+    "رياضيات": [("5×5؟", ["25", "20"]), ("10+10؟", ["20", "30"])],
+    "حاسب": [("لغة برمجة؟", ["Python", "Word"]), ("وحدة إدخال؟", ["الفأرة", "الشاشة"])],
+    "انقلش": [("I ___ cold", ["am", "is"]), ("Color of sky?", ["Blue", "Red"])],
+    "علوم": [("مصدر الضوء؟", ["الشمس", "القمر"]), ("تتنفس الأسماك بـ؟", ["الخياشيم", "الرئة"])]
 }
 
-# --- 3. عرض الاختبار ---
 subjects = list(questions.keys())
 for i, sub in enumerate(subjects):
     if st.session_state.page == f"quiz_{sub}":
-        st.markdown(f"<h2 style='text-align:center; color:#10a37f;'>📝 اختبار مادة: {sub}</h2>", unsafe_allow_html=True)
+        st.markdown(f"### 📝 اختبار: {sub}")
         with st.form(f"form_{sub}"):
-            score = 0
-            for j, (q, opts) in enumerate(questions[sub]):
-                ans = st.radio(f"{j+1}. {q}", opts, key=f"{sub}_{j}")
-                if ans == opts[0]: score += 1
-            if st.form_submit_button("المادة التالية ➡️"):
-                st.session_state.scores[sub] = score
+            ans1 = st.radio(questions[sub][0][0], questions[sub][0][1])
+            ans2 = st.radio(questions[sub][1][0], questions[sub][1][1])
+            if st.form_submit_button("التالي"):
+                st.session_state.scores[sub] = (1 if ans1 == questions[sub][0][1][0] else 0) + (1 if ans2 == questions[sub][1][1][0] else 0)
                 st.session_state.page = f"quiz_{subjects[i+1]}" if i+1 < len(subjects) else "final_report"
                 st.rerun()
 
-# --- 4. التقرير النهائي ---
+# --- 3. التقرير النهائي وزر الابتكار ---
 if st.session_state.page == "final_report":
     st.balloons()
-    st.markdown("<h1 style='text-align:center;'>📊 نتائج ذكاء جوري</h1>", unsafe_allow_html=True)
-    
     strongest = max(st.session_state.scores, key=st.session_state.scores.get)
-    weakest = min(st.session_state.scores, key=st.session_state.scores.get)
-
-    st.markdown(f"<div class='report-card'><h3>🌟 أنتِ مبدعة في: {strongest}</h3>", unsafe_allow_html=True)
-    st.write("نصيحة LAI: مهاراتك هنا استثنائية! حاولي البحث عن تحديات أصعب لتكوني عالمة في هذا المجال.")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown(f"<div class='report-card' style='border-color: #ff4b4b;'><h3>📈 مادة تحتاج مراجعة: {weakest}</h3>", unsafe_allow_html=True)
-    st.write(f"لا تقلقي يا بطلة، مادة {weakest} ستصبح سهلة مع التدريب اليومي.")
+    st.markdown(f"## 🏆 تم الاجتياز بنجاح! مادة قوتكِ هي: {strongest}")
     
-    # قسم النصائح
-    st.markdown("<div class='advice-box'><b>💡 نصائح LAI الذهبية:</b><br>"
-                "1. ابدأي بالمذاكرة في مكان هادئ وبعيد عن الجوال.<br>"
-                "2. استخدمي الألوان في تلخيص دروسكِ.<br>"
-                "3. اشرحي ما تعلمتِهِ لأي شخص، فهذا يثبت المعلومة 100%.</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-
     st.write("---")
-    st.markdown("### 📅 جدول المذاكرة الذكي")
-    st.table({"اليوم": ["الأحد", "الاثنين", "الثلاثاء"], "التركيز": [f"مراجعة {weakest}", f"تمارين {weakest}", f"إبداع في {strongest}"]})
+    st.markdown("### 🚀 مُبتكر: ابدأ فكرتك الأولى نحو الريادة")
+    st.write(f"بناءً على تميزك في مادة {strongest}، أنتِ الآن مؤهلة للدخول في مختبر الابتكار.")
+    
+    if st.button("الذهاب إلى مُبتكر 💡"):
+        st.session_state.page = "innovator"
+        st.rerun()
 
-    if st.button("إعادة الاختبار 🔄"):
+# --- 4. صفحة مُبتكر (الريادة) ---
+if st.session_state.page == "innovator":
+    strongest = max(st.session_state.scores, key=st.session_state.scores.get)
+    st.markdown("<div class='innovation-box'>", unsafe_allow_html=True)
+    st.title("💡 مختبر الابتكار الذكي")
+    st.write(f"بما أنكِ مبدعة في **{strongest}**، دعينا نصمم فكرتك الريادية.")
+    
+    interest = st.selectbox("المجال الذي تهتمين به أكثر؟", ["التقنية", "البيئة", "الصحة", "التعليم", "الطاقة"])
+    
+    if st.button("احصلي على فكرتك من LAI ✨"):
+        with st.spinner("جاري توليد فكرة عبقرية..."):
+            time.sleep(2)
+            if interest == "التقنية":
+                idea = f"تطبيق ذكي يستخدم مهاراتك في {strongest} لتعليم الأطفال البرمجة بأسلوب قصصي."
+            elif interest == "البيئة":
+                idea = f"جهاز يعمل بتقنيات {strongest} لمراقبة جودة التربة وسقي النباتات تلقائياً."
+            else:
+                idea = f"منصة تفاعلية تربط مفاهيم {strongest} بحلول مبتكرة في مجال {interest}."
+            
+            st.success("✅ فكرتك المقترحة:")
+            st.markdown(f"**{idea}**")
+            st.info(f"**شرح الفكرة:** هذا المشروع يدمج قوتك في {strongest} مع شغفك بـ {interest} ليخلق حلاً ريادياً ينافس عالمياً.")
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    if st.button("العودة للرئيسية"):
         st.session_state.page = "welcome"
-        st.session_state.scores = {k: 0 for k in st.session_state.scores}
         st.rerun()
 
 st.markdown("<br><center><b>صُنع بواسطة المبرمجة جوري 👑</b></center>", unsafe_allow_html=True)
