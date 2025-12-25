@@ -4,7 +4,7 @@ import time
 # إعدادات الصفحة
 st.set_page_config(page_title="منصة LAI التعليمية", page_icon="🎓", layout="centered")
 
-# تنسيق CSS احترافي ودعم كامل للغة العربية
+# تنسيق CSS لدعم اللغة العربية والجمالية
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -16,26 +16,19 @@ st.markdown("""
     }
     .stApp { background-color: #ffffff; }
     
-    /* تصميم البطاقة الترحيبية */
     .welcome-box {
         text-align: center;
         padding: 40px;
         border-radius: 25px;
-        background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+        background: linear-gradient(135deg, #e0f2f1 0%, #ffffff 100%);
         border: 2px solid #10a37f;
-        box-shadow: 0 10px 20px rgba(16, 163, 127, 0.1);
     }
     
-    /* تصميم الأزرار */
     .stButton > button {
         background: #10a37f;
         color: white;
         border-radius: 12px;
-        width: 100%;
-        height: 3.5em;
-        font-size: 1.2em;
         font-weight: bold;
-        border: none;
     }
     
     .report-card {
@@ -46,15 +39,12 @@ st.markdown("""
         margin-bottom: 20px;
     }
     
-    .link-box {
-        background: #e0f2f1;
-        padding: 10px;
-        border-radius: 8px;
-        margin: 5px 0;
-        text-decoration: none;
-        color: #00796b;
-        display: block;
-        font-weight: bold;
+    .advice-box {
+        background: #fff8e1;
+        border: 1px dashed #ffb300;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -66,106 +56,68 @@ if 'scores' not in st.session_state: st.session_state.scores = {"لغتي": 0, "
 # --- 1. الصفحة الترحيبية ---
 if st.session_state.page == "welcome":
     st.markdown("<div class='welcome-box'>", unsafe_allow_html=True)
-    st.image("https://img.freepik.com/free-vector/cute-girl-studying-with-laptop-cartoon-vector-icon-illustration-people-technology-icon-concept_138676-4402.jpg", width=250)
-    st.markdown("<h1 style='color: #10a37f;'>أهلاً بكِ في منصة LAI</h1>", unsafe_allow_html=True)
-    st.markdown("<h3>مساعدكِ الذكي المطور بواسطة المبرمجة جوري</h3>", unsafe_allow_html=True)
-    if st.button("تفعيل الذكاء الاصطناعي وابدأ الاختبار 🚀"):
+    # صورة جديدة ومناسبة
+    st.image("https://img.freepik.com/free-vector/hand-drawn-back-school-background_23-2149033374.jpg", width=350)
+    st.markdown("<h1 style='color: #10a37f;'>مرحباً بكِ في منصة LAI</h1>", unsafe_allow_html=True)
+    st.markdown("<h4>المستقبل يبدأ من هنا.. حللي مهاراتك مع ذكاء جوري الاصطناعي</h4>", unsafe_allow_html=True)
+    if st.button("تفعيل LAI وابدأي الاختبار 🚀"):
         st.session_state.page = "quiz_لغتي"
         st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --- 2. بنك الأسئلة والروابط التعليمية ---
+# --- 2. بنك الأسئلة والروابط ---
 questions = {
-    "لغتي": [
-        ("ما هي علامة الرفع الأصلية؟", ["الضمة", "الفتحة", "الكسرة"]),
-        ("الكلمة التي تدل على 'فعل' هي:", ["يشرح", "المعلم", "في"]),
-        ("جمع كلمة 'طالبة' هو:", ["طالبات", "طلاب", "طالبون"]),
-        ("الجملة الاسمية تبدأ بـ:", ["اسم", "فعل", "حرف"]),
-        ("مرادف كلمة 'جميل':", ["وسيم", "قبيح", "صغير"])
-    ],
-    "رياضيات": [
-        ("ما ناتج 12 × 12؟", ["144", "124", "134"]),
-        ("مجموع زوايا المثلث يساوي:", ["180", "90", "360"]),
-        ("العدد الأولي من بين هذه الأعداد هو:", ["7", "4", "9"]),
-        ("ما قيمة 25% من العدد 100؟", ["25", "50", "10"]),
-        ("مساحة المربع = طول الضلع في:", ["نفسه", "2", "4"])
-    ],
-    "حاسب": [
-        ("تعتبر لوحة المفاتيح وحدة:", ["إدخال", "إخراج", "تخزين"]),
-        ("أصغر وحدة تخزين بيانات هي:", ["البت (Bit)", "الميجابايت", "الكيلوبايت"]),
-        ("برنامج يستخدم للعروض التقديمية:", ["باوربوينت", "إكسل", "وورد"]),
-        ("مخترع لغة بايثون هو:", ["جيدو فان روسم", "بيل جيتس", "ستيف جوبز"]),
-        ("الإنترنت هو شبكة:", ["عالمية", "محلية", "خاصة"])
-    ],
-    "انقلش": [
-        ("Choose the correct: '___ are playing'", ["They", "He", "I"]),
-        ("Past tense of 'Go' is:", ["Went", "Gone", "Goes"]),
-        ("Which one is a 'Fruit'?", ["Apple", "Carrot", "Bread"]),
-        ("Capital of Saudi Arabia is:", ["Riyadh", "Jeddah", "Dammam"]),
-        ("The color of the sky is:", ["Blue", "Red", "Green"])
-    ],
-    "علوم": [
-        ("أقرب كوكب للشمس هو:", ["عطارد", "الزهرة", "المريخ"]),
-        ("تسمى الطبقة الخارجية للأرض:", ["القشرة", "اللب", "الوشاح"]),
-        ("عملية تحول السائل إلى غاز تسمى:", ["تبخر", "تجمد", "تكثف"]),
-        ("الغاز الذي نتنفسه هو:", ["الأكسجين", "نيتروجين", "ثاني أكسيد الكربون"]),
-        ("المادة التي لها شكل ثابت وحجم ثابت هي:", ["الصلبة", "السائلة", "الغازية"])
-    ]
+    "لغتي": [("علامة الرفع الأصلية؟", ["الضمة", "الفتحة"]), ("نوع 'يقرأ'؟", ["فعل", "اسم"]), ("جمع 'كتاب'؟", ["كتب", "كتابون"]), ("ضد 'الصدق'؟", ["الكذب", "الأمانة"]), ("الفاعل يكون دائماً؟", ["مرفوعاً", "منصوباً"])],
+    "رياضيات": [("12×12؟", ["144", "124"]), ("زوايا المثلث؟", ["180", "360"]), ("نصف الـ 50؟", ["25", "20"]), ("5+5×2؟", ["15", "20"]), ("العدد الزوجي هو؟", ["2", "3"])],
+    "حاسب": [("وحدة الإدخال؟", ["الفأرة", "الشاشة"]), ("اختصار الذكاء الاصطناعي؟", ["AI", "VR"]), ("عقل الحاسب؟", ["المعالج", "الرام"]), ("لغة برمجة؟", ["Python", "Word"]), ("شبكة عالمية؟", ["الإنترنت", "المحلية"])],
+    "انقلش": [("I ___ happy", ["am", "is"]), ("Past of 'Eat'?", ["Ate", "Eaten"]), ("Color of grass?", ["Green", "Red"]), ("Plural of 'Boy'?", ["Boys", "Boies"]), ("Opposite of 'Hot'?", ["Cold", "Warm"])],
+    "علوم": [("كوكب المريخ لونه؟", ["أحمر", "أزرق"]), ("غاز التنفس؟", ["أكسجين", "نيتروجين"]), ("أقرب كوكب؟", ["عطارد", "الأرض"]), ("حالة الثلج؟", ["صلبة", "سائلة"]), ("مصدر الضوء؟", ["الشمس", "القمر"])]
 }
 
-edu_links = {
-    "لغتي": "https://ien.edu.sa/#/course/216",
-    "رياضيات": "https://ien.edu.sa/#/course/213",
-    "حاسب": "https://ien.edu.sa/#/course/220",
-    "انقلش": "https://ien.edu.sa/#/course/218",
-    "علوم": "https://ien.edu.sa/#/course/214"
-}
-
-# --- 3. عرض الاختبار مادة مادة ---
+# --- 3. عرض الاختبار ---
 subjects = list(questions.keys())
 for i, sub in enumerate(subjects):
     if st.session_state.page == f"quiz_{sub}":
         st.markdown(f"<h2 style='text-align:center; color:#10a37f;'>📝 اختبار مادة: {sub}</h2>", unsafe_allow_html=True)
-        st.write("---")
         with st.form(f"form_{sub}"):
             score = 0
             for j, (q, opts) in enumerate(questions[sub]):
                 ans = st.radio(f"{j+1}. {q}", opts, key=f"{sub}_{j}")
                 if ans == opts[0]: score += 1
-            
             if st.form_submit_button("المادة التالية ➡️"):
                 st.session_state.scores[sub] = score
                 st.session_state.page = f"quiz_{subjects[i+1]}" if i+1 < len(subjects) else "final_report"
                 st.rerun()
 
-# --- 4. صفحة التقرير النهائي ---
+# --- 4. التقرير النهائي ---
 if st.session_state.page == "final_report":
     st.balloons()
-    st.markdown("<h1 style='text-align:center;'>📊 تقرير LAI الذكي</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center;'>📊 نتائج ذكاء جوري</h1>", unsafe_allow_html=True)
     
     strongest = max(st.session_state.scores, key=st.session_state.scores.get)
     weakest = min(st.session_state.scores, key=st.session_state.scores.get)
 
-    st.markdown(f"<div class='report-card'><h3>🌟 مادة التميز: {strongest}</h3>", unsafe_allow_html=True)
-    st.write(f"أداء مذهل! يوصي LAI بمتابعة الإبداع في {strongest}.")
-    st.markdown(f"<a href='{edu_links[strongest]}' target='_blank' class='link-box'>🔗 اضغطي هنا لمحتوى إثرائي في {strongest}</a>", unsafe_allow_html=True)
+    st.markdown(f"<div class='report-card'><h3>🌟 أنتِ مبدعة في: {strongest}</h3>", unsafe_allow_html=True)
+    st.write("نصيحة LAI: مهاراتك هنا استثنائية! حاولي البحث عن تحديات أصعب لتكوني عالمة في هذا المجال.")
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown(f"<div class='report-card' style='border-color: #ff4b4b;'><h3>📈 مادة للتطوير: {weakest}</h3>", unsafe_allow_html=True)
-    st.write(f"تحتاجين دعماً بسيطاً في {weakest}. LAI اختار لكِ أفضل المصادر للمراجعة:")
-    st.markdown(f"<a href='{edu_links[weakest]}' target='_blank' class='link-box' style='color:#c62828; background:#ffebee;'>📚 اضغطي هنا لمراجعة دروس {weakest}</a>", unsafe_allow_html=True)
+    st.markdown(f"<div class='report-card' style='border-color: #ff4b4b;'><h3>📈 مادة تحتاج مراجعة: {weakest}</h3>", unsafe_allow_html=True)
+    st.write(f"لا تقلقي يا بطلة، مادة {weakest} ستصبح سهلة مع التدريب اليومي.")
+    
+    # قسم النصائح
+    st.markdown("<div class='advice-box'><b>💡 نصائح LAI الذهبية:</b><br>"
+                "1. ابدأي بالمذاكرة في مكان هادئ وبعيد عن الجوال.<br>"
+                "2. استخدمي الألوان في تلخيص دروسكِ.<br>"
+                "3. اشرحي ما تعلمتِهِ لأي شخص، فهذا يثبت المعلومة 100%.</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("### 📅 جدول المذاكرة المقترح")
-    st.table({
-        "الفترة": ["الصباح (تركيز)", "المساء (مراجعة)", "الليل (إبداع)"],
-        "الخطة": [f"مراجعة {weakest}", f"حل تمارين مخصصة", f"تطوير مهارات {strongest}"]
-    })
+    st.write("---")
+    st.markdown("### 📅 جدول المذاكرة الذكي")
+    st.table({"اليوم": ["الأحد", "الاثنين", "الثلاثاء"], "التركيز": [f"مراجعة {weakest}", f"تمارين {weakest}", f"إبداع في {strongest}"]})
 
-    if st.button("إعادة البدء 🔄"):
+    if st.button("إعادة الاختبار 🔄"):
         st.session_state.page = "welcome"
         st.session_state.scores = {k: 0 for k in st.session_state.scores}
         st.rerun()
 
-# العبارة الختامية
-st.markdown("<br><br><center><b>صُنع بواسطة المبرمجة جوري 👑</b></center>", unsafe_allow_html=True)
+st.markdown("<br><center><b>صُنع بواسطة المبرمجة جوري 👑</b></center>", unsafe_allow_html=True)
