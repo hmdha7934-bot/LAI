@@ -4,7 +4,7 @@ import time
 # إعدادات الصفحة
 st.set_page_config(page_title="منصة LAI التعليمية", page_icon="🎓", layout="centered")
 
-# تنسيق CSS لضمان عدم انعكاس الكلام ودعم اللغة العربية
+# تنسيق CSS احترافي ودعم كامل للغة العربية
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
@@ -38,15 +38,23 @@ st.markdown("""
         border: none;
     }
     
-    /* تنسيق الراديو (الأسئلة) */
-    .stRadio > div { direction: rtl; text-align: right; }
-    
     .report-card {
         background: #f8f9fa;
         border-right: 8px solid #10a37f;
         padding: 20px;
         border-radius: 10px;
         margin-bottom: 20px;
+    }
+    
+    .link-box {
+        background: #e0f2f1;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 5px 0;
+        text-decoration: none;
+        color: #00796b;
+        display: block;
+        font-weight: bold;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -58,16 +66,15 @@ if 'scores' not in st.session_state: st.session_state.scores = {"لغتي": 0, "
 # --- 1. الصفحة الترحيبية ---
 if st.session_state.page == "welcome":
     st.markdown("<div class='welcome-box'>", unsafe_allow_html=True)
-    # صورة طالبة جديدة
     st.image("https://img.freepik.com/free-vector/cute-girl-studying-with-laptop-cartoon-vector-icon-illustration-people-technology-icon-concept_138676-4402.jpg", width=250)
     st.markdown("<h1 style='color: #10a37f;'>أهلاً بكِ في منصة LAI</h1>", unsafe_allow_html=True)
-    st.markdown("<h3>أنا مساعدكِ الذكي، سأقوم بتحليل مهاراتكِ الدراسية وتطويرها.</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>مساعدكِ الذكي المطور بواسطة المبرمجة جوري</h3>", unsafe_allow_html=True)
     if st.button("تفعيل الذكاء الاصطناعي وابدأ الاختبار 🚀"):
         st.session_state.page = "quiz_لغتي"
         st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --- 2. بنك الأسئلة (5 لكل مادة) ---
+# --- 2. بنك الأسئلة والروابط التعليمية ---
 questions = {
     "لغتي": [
         ("ما هي علامة الرفع الأصلية؟", ["الضمة", "الفتحة", "الكسرة"]),
@@ -106,6 +113,14 @@ questions = {
     ]
 }
 
+edu_links = {
+    "لغتي": "https://ien.edu.sa/#/course/216",
+    "رياضيات": "https://ien.edu.sa/#/course/213",
+    "حاسب": "https://ien.edu.sa/#/course/220",
+    "انقلش": "https://ien.edu.sa/#/course/218",
+    "علوم": "https://ien.edu.sa/#/course/214"
+}
+
 # --- 3. عرض الاختبار مادة مادة ---
 subjects = list(questions.keys())
 for i, sub in enumerate(subjects):
@@ -116,7 +131,7 @@ for i, sub in enumerate(subjects):
             score = 0
             for j, (q, opts) in enumerate(questions[sub]):
                 ans = st.radio(f"{j+1}. {q}", opts, key=f"{sub}_{j}")
-                if ans == opts[0]: score += 1 # الخيار الأول هو الصحيح
+                if ans == opts[0]: score += 1
             
             if st.form_submit_button("المادة التالية ➡️"):
                 st.session_state.scores[sub] = score
@@ -131,23 +146,20 @@ if st.session_state.page == "final_report":
     strongest = max(st.session_state.scores, key=st.session_state.scores.get)
     weakest = min(st.session_state.scores, key=st.session_state.scores.get)
 
-    # نقاط القوة
     st.markdown(f"<div class='report-card'><h3>🌟 مادة التميز: {strongest}</h3>", unsafe_allow_html=True)
-    st.write(f"مذهل! لقد حققتِ أعلى الدرجات في {strongest}. يرى الذكاء الاصطناعي أنكِ تمتلكين مستقبلاً باهراً في هذا المجال.")
-    st.info("💡 نصيحة لتنمية مهاراتك: حاولي قراءة كتب إثرائية خارج المنهج في هذه المادة.")
+    st.write(f"أداء مذهل! يوصي LAI بمتابعة الإبداع في {strongest}.")
+    st.markdown(f"<a href='{edu_links[strongest]}' target='_blank' class='link-box'>🔗 اضغطي هنا لمحتوى إثرائي في {strongest}</a>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # نقاط الضعف
     st.markdown(f"<div class='report-card' style='border-color: #ff4b4b;'><h3>📈 مادة للتطوير: {weakest}</h3>", unsafe_allow_html=True)
-    st.write(f"بناءً على النتائج، مادة {weakest} تحتاج لتركيز إضافي. تذكري أن الخطأ هو أول خطوة للنجاح!")
-    st.warning("🛠️ خطة التحسين: ابدأي بمراجعة الدروس الأساسية لمدة 20 دقيقة يومياً واستخدمي الخرائط الذهنية.")
+    st.write(f"تحتاجين دعماً بسيطاً في {weakest}. LAI اختار لكِ أفضل المصادر للمراجعة:")
+    st.markdown(f"<a href='{edu_links[weakest]}' target='_blank' class='link-box' style='color:#c62828; background:#ffebee;'>📚 اضغطي هنا لمراجعة دروس {weakest}</a>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # الجدول الدراسي
     st.markdown("### 📅 جدول المذاكرة المقترح")
     st.table({
         "الفترة": ["الصباح (تركيز)", "المساء (مراجعة)", "الليل (إبداع)"],
-        "الخطة": [f"مراجعة {weakest}", f"حل تمارين {weakest}", f"مشروع في {strongest}"]
+        "الخطة": [f"مراجعة {weakest}", f"حل تمارين مخصصة", f"تطوير مهارات {strongest}"]
     })
 
     if st.button("إعادة البدء 🔄"):
@@ -155,4 +167,5 @@ if st.session_state.page == "final_report":
         st.session_state.scores = {k: 0 for k in st.session_state.scores}
         st.rerun()
 
-st.markdown("<br><center>صُنع بكل فخر بواسطة <b>الجوري</b> 👑</center>", unsafe_allow_html=True)
+# العبارة الختامية
+st.markdown("<br><br><center><b>صُنع بواسطة المبرمجة جوري 👑</b></center>", unsafe_allow_html=True)
